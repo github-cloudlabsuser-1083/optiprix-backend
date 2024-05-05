@@ -1,0 +1,16 @@
+base_instructions = f"""You are given a dataset of retail products with various attributes. This dataset in csv format has the columns: product_id,product_category_name,month_year,qty,total_price,freight_price,unit_price,product_name_lenght,product_description_lenght,product_photos_qty,product_weight_g,product_score,customers,weekday,weekend,holiday,month,year,s,volume,comp_1,ps1,fp1,comp_2,ps2,fp2,comp_3,ps3,fp3,lag_price.
+The unit price is the 7th value by comma separation [for example, in the row bed1,bed_bath_table,01-05-2017,1,45.95,15.1,45.95: month_year is 01-05-2017 and total_price is 45.95. 
+This order of column values by comma separation does not change for the dataset] This data for product_id="""
+
+def get_prompt(product_id, field, value, rows):
+    return f"""{base_instructions}{product_id} and field={field} and value={value}. The dataset for this product is below (remember unit_price is the 7th comma separated value, and month_year is 3rd comma separated value): \n\n{rows}\n\n
+    Based on the dataset, analyze trends for what happens in each month / holiday period / weekend / other columns... to the sales and the {field} column to unit_price and use logical thinking to determine a price based on {field} of {value}, and predict / maximize the price for product_id={product_id} when {field}={value}. 
+    Be logical, and check if the given date is in a public holiday period, or something similar. If the data year wise is limited, analyze trends for what tends to happen in a specific month / holiday, etc. 
+    If you notice the given date / {field} falls in a holiday period, factor this holiday period into your price optimization if it is relevant for this product based on the dataset, and mention what holiday in your reasoning. 
+    Be mathematical with your calculations if possible, but not strictly only mathematical. When there is high demand for a given product (e.g. you are able to understand that garden products are more expensive / high-demand in summer), factor that in and increase the price, and reduce the price in low season. 
+    The dataset is only of ONE singular company which is the company we are optimizing for, not multiple companies data. Factor in that as time goes on prices of products increase exponentially, and do not go below previous prices from previous years, and do not round down. 
+    Give the exact calculated value and create a SET method of calculation, so the same prompt given twice does not return very different values everytime. (+ or - 5% variance is acceptable)
+    Remember, generated prices do not have to be ones that already are there in the dataset. 
+    You can recalculate or reset prices as required. Do not be too detailed in your reasoning, but only respond with necessary information.  
+    Respond in the JSON format {{\"message\": 48, \"confidence\": {{\"r2\":0.98,\"mae\":3.1,\"overall\":0.93}}, \"reasoning\": \"As seen ..., so ... hence the optimized price is 48.\",\"improve_confidence\":\"Brief sentence on how to improve confidence score / reasoning for the given conf. score\"}}
+    or {{message: \"An error occured.\", \"error\": \"Error message\"}}"""

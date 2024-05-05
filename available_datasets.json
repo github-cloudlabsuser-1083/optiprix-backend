@@ -1,0 +1,7 @@
+[
+    {
+        "name": "retail_price",
+        "type": "json",
+        "url": "https://raw.githubusercontent.com/github-cloudlabsuser-1083/gigabots-price-optimization/main/retail_price.csv"
+    }
+]
